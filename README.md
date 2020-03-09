@@ -13,7 +13,8 @@ The cron string is passed as a single argument to the application.
 
 ## Limitations
 - This does not handle the special time strings such as "@yearly"
-- This does not handle if the month has less than 31 days or not.
+- This does not handle if the month has less than 31 days or not
+- Test coverage is not complete
 
 ## Instructions to run the program
 ```

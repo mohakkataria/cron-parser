@@ -21,6 +21,15 @@ public class StepTest {
   }
 
   @Test
+  public void testStepWithMissingValues()
+    throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    com.cronparser.segments.Base d = new Minute("*/");
+    exceptionRule.expect(RuntimeException.class);
+    exceptionRule.expectMessage("Step does not have valid expression : */");
+    d.parse();
+  }
+
+  @Test
   public void testStepWithInvalidStepStart()
     throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
     com.cronparser.segments.Base d = new Minute("a/15");

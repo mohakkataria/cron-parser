@@ -25,6 +25,15 @@ public class RangeTest {
   }
 
   @Test
+  public void testRangeWithMissingValue()
+    throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    com.cronparser.segments.Base d = new Weekday("1-");
+    exceptionRule.expect(RuntimeException.class);
+    exceptionRule.expectMessage("Invalid segment expression : 1-");
+    d.parse();
+  }
+
+  @Test
   public void testRangeWithWrongMaximum()
     throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
     com.cronparser.segments.Base d = new Weekday("1-8");
@@ -39,6 +48,15 @@ public class RangeTest {
     com.cronparser.segments.Base d = new Month("0-6");
     exceptionRule.expect(RuntimeException.class);
     exceptionRule.expectMessage("Range minimum is not valid. Given : 0 Min allowed : 1");
+    d.parse();
+  }
+
+  @Test
+  public void testRangeWithWrongMinimum2()
+    throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    com.cronparser.segments.Base d = new Month("13-16");
+    exceptionRule.expect(RuntimeException.class);
+    exceptionRule.expectMessage("Range minimum is not valid. Given : 13 Max allowed : 12");
     d.parse();
   }
 

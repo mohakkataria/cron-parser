@@ -41,6 +41,15 @@ public class ListTest {
   }
 
   @Test
+  public void testListWithMissingValue()
+    throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    com.cronparser.segments.Base d = new Weekday("1,");
+    exceptionRule.expect(RuntimeException.class);
+    exceptionRule.expectMessage("List does not have valid expression : 1,");
+    d.parse();
+  }
+
+  @Test
   public void testListWithValidComplexValues()
     throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
     com.cronparser.segments.Base d = new Weekday("1-2,5-6");

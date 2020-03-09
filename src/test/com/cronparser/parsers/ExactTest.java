@@ -3,6 +3,8 @@ package com.cronparser.parsers;
 import static org.junit.Assert.assertEquals;
 
 import com.cronparser.segments.Day;
+import com.cronparser.segments.Month;
+import com.cronparser.segments.Weekday;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.junit.Rule;
@@ -27,6 +29,15 @@ public class ExactTest {
     com.cronparser.segments.Base d = new Day("59");
     exceptionRule.expect(RuntimeException.class);
     exceptionRule.expectMessage("The value for segment is more than the maximum allowed");
+    d.parse();
+  }
+
+  @Test
+  public void testDayExactParserWithExceptionOfMinimum()
+    throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    com.cronparser.segments.Base d = new Month("0");
+    exceptionRule.expect(RuntimeException.class);
+    exceptionRule.expectMessage("The value for segment is less than the minimum allowed");
     d.parse();
   }
 }
