@@ -1,3 +1,4 @@
 .idea/*
 deliveroo-takehome.iml
 build/*
+.gradle/*
