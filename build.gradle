@@ -1,0 +1,50 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+mainClassName = 'com.cronparser.CronParser'
+
+// tag::repositories[]
+repositories {
+    mavenCentral()
+}
+// end::repositories[]
+
+// tag::jar[]
+jar {
+    baseName = 'cronparser'
+    version =  '0.1.0'
+    manifest {
+        attributes(
+                'Main-Class': 'com.cronparser.CronParser'
+        )
+    }
+}
+// end::jar[]
+
+sourceSets.main.java.srcDirs = ['src/main/']
+sourceSets.test.java.srcDirs = ['src/test/']
+
+// tag::dependencies[]
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+dependencies {
+    compile "org.projectlombok:lombok:1.18.6"
+    annotationProcessor "org.projectlombok:lombok:1.18.6"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core:3.0.0"
+}
+// end::dependencies[]
+
+test {
+    testLogging {
+        displayGranularity 1
+        showStackTraces = true
+        exceptionFormat = 'full'
+        events "STARTED", "PASSED", "FAILED", "SKIPPED"
+    }
+}
+// tag::wrapper[]
+// end::wrapper[]
