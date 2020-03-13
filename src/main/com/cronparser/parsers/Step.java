@@ -39,6 +39,6 @@ public class Step extends com.cronparser.parsers.Base {
     }
 
     return IntStream.iterate(stepSegments[0], n -> n + stepSegments[1])
-      .limit(this.segment.getMaximum() / stepSegments[1] + 1).boxed().collect(Collectors.toList());
+      .limit((this.segment.getMaximum() - stepSegments[0])/ stepSegments[1] + 1).boxed().collect(Collectors.toList());
   }
 }

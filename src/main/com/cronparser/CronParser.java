@@ -5,23 +5,27 @@ import com.cronparser.segments.Hour;
 import com.cronparser.segments.Minute;
 import com.cronparser.segments.Month;
 import com.cronparser.segments.Weekday;
+import com.cronparser.segments.Year;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CronParser {
 
   String expression;
-  List minute;
-  List hour;
-  List day;
-  List month;
-  List weekday;
+  HashMap<String, List> segmentsMap;
   String command;
+  static List<String> displayOrder = List.of("minute", "hour", "day", "month", "weekday", "year");
+  static Map<String, String> displayString = Map
+    .of("day", "day of month", "weekday", "day of week");
 
   CronParser(String expression)
     throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
     this.expression = expression;
+    this.segmentsMap = new HashMap<>();
     this.parse();
   }
 
@@ -30,37 +34,45 @@ public class CronParser {
     System.out.println("Expression entered : " + this.expression);
     String[] segments = this.expression.split("\\s+");
 
-    if (segments.length != 6) {
+    if (segments.length < 6) {
       throw new RuntimeException("There must be 6 segments in the expression");
     }
 
-    this.minute = new Minute(segments[0]).parse();
-    this.hour = new Hour(segments[1]).parse();
-    this.day = new Day(segments[2]).parse();
-    this.month = new Month(segments[3]).parse();
-    this.weekday = new Weekday(segments[4]).parse();
-    this.command = segments[5];
+    int i = 0;
+    this.segmentsMap.put("minute", new Minute(segments[i++]).parse());
+    this.segmentsMap.put("hour", new Hour(segments[i++]).parse());
+    this.segmentsMap.put("day", new Day(segments[i++]).parse());
+    this.segmentsMap.put("month", new Month(segments[i++]).parse());
+    this.segmentsMap.put("weekday", new Weekday(segments[i++]).parse());
+    try {
+      this.segmentsMap.put("year", new Year(segments[i++]).parse());
+    } catch (Exception e) {
+      i--;
+    }
+    this.command = segments[i] + extractArguments(segments, i + 1);
     return this;
+  }
+
+  private String extractArguments(String[] segments, int startingIndex) {
+    String arguments = "";
+    for (int i = startingIndex; i < segments.length; i++) {
+      arguments += " " + segments[i];
+    }
+    return arguments;
   }
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("minute        %s", this.minute.stream().map(i -> i.toString()).collect(
-      Collectors.joining(" "))));
-    sb.append(System.getProperty("line.separator"));
-    sb.append(String.format("hour          %s", this.hour.stream().map(i -> i.toString()).collect(
-      Collectors.joining(" "))));
-    sb.append(System.getProperty("line.separator"));
-    sb.append(String.format("day of month  %s", this.day.stream().map(i -> i.toString()).collect(
-      Collectors.joining(" "))));
-    sb.append(System.getProperty("line.separator"));
-    sb.append(String.format("month         %s", this.month.stream().map(i -> i.toString()).collect(
-      Collectors.joining(" "))));
-    sb.append(System.getProperty("line.separator"));
-    sb.append(
-      String.format("day of week   %s", this.weekday.stream().map(i -> i.toString()).collect(
-        Collectors.joining(" "))));
-    sb.append(System.getProperty("line.separator"));
+    for (String section : displayOrder) {
+      if (this.segmentsMap.get(section) == null) {
+        continue;
+      }
+      String displayString = this.displayString.getOrDefault(section, section);
+      sb.append(String.format(displayString + " ".repeat(14 - displayString.length()) + "%s",
+        this.segmentsMap.get(section).stream().map(i -> i.toString()).collect(
+          Collectors.joining(" "))));
+      sb.append(System.getProperty("line.separator"));
+    }
     sb.append(String.format("command       %s", this.command));
     return sb.toString();
   }
